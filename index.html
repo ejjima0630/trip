@@ -430,11 +430,12 @@ function tick(){
   const hh=String(now.getHours()).padStart(2,"0"), mm=String(now.getMinutes()).padStart(2,"0");
   document.getElementById("clock").textContent=hh+":"+mm;
   const nowMin=now.getHours()*60+now.getMinutes();
-  const iso=now.toISOString().slice(0,10);
+  const iso=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
 
   // どの日か（モックでは日付が一致しなければ1日目を仮表示）
   let day = iso===TRIP[2] ? 2 : 1;
   const list=DAYS[day];
+  const inTrip = (iso===TRIP[1]||iso===TRIP[2]);
 
   let liveI=-1;
   for(let i=0;i<list.length;i++){ if(nowMin>=toMin(list[i].t)) liveI=i; }
@@ -442,7 +443,7 @@ function tick(){
   document.querySelectorAll(".ev").forEach(ev=>{
     ev.classList.remove("past","live");
     ev.querySelector(".badge-now")?.remove();
-    if(+ev.dataset.day!==day) return;
+    if(!inTrip || +ev.dataset.day!==day) return;
     const i=+ev.dataset.i;
     if(i<liveI) ev.classList.add("past");
     if(i===liveI){
@@ -452,7 +453,6 @@ function tick(){
     }
   });
 
-  const inTrip = (iso===TRIP[1]||iso===TRIP[2]);
   if(liveI>=0 && inTrip){
     document.getElementById("nowTitle").textContent=list[liveI].n;
     document.getElementById("nowSub").textContent=list[liveI].m||"";
