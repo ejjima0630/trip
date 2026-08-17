@@ -362,6 +362,12 @@ const store = {
 /* ================= RENDER: timeline ================= */
 function toMin(t){ const[a,b]=t.split(":").map(Number); return a*60+b; }
 function fmt(min){ const h=Math.floor(min/60),m=min%60; return h>0?`${h}時間${m}分`:`${m}分`; }
+function toDate(dateStr,timeStr){
+  const[h,m]=timeStr.split(":").map(Number);
+  const d=new Date(dateStr+"T00:00:00");
+  d.setHours(h,m,0,0);
+  return d;
+}
 
 function renderTL(day){
   const el=document.getElementById("tl"+day);
@@ -484,14 +490,27 @@ function tick(){
     document.getElementById("nowTitle").textContent="出発前";
     document.getElementById("nowSub").textContent="8/18（火）6:30 に枚方東ICから出発します";
   }
-  const nx=list[liveI+1];
-  if(nx){
-    const d=toMin(nx.t)-nowMin;
-    document.getElementById("nextIn").textContent = d>0?fmt(d)+"後":"まもなく";
-    document.getElementById("nextName").textContent = nx.n;
+  if(inTrip){
+    const nx=list[liveI+1];
+    if(nx){
+      const d=toMin(nx.t)-nowMin;
+      document.getElementById("nextIn").textContent = d>0?fmt(d)+"後":"まもなく";
+      document.getElementById("nextName").textContent = nx.n;
+    }else{
+      document.getElementById("nextIn").textContent="—";
+      document.getElementById("nextName").textContent="予定は以上です";
+    }
   }else{
-    document.getElementById("nextIn").textContent="—";
-    document.getElementById("nextName").textContent="予定は以上です";
+    // 旅行日でない：出発(1日目1件目)までの実時間カウントダウン
+    const dep=toDate(TRIP[1],DAYS[1][0].t);
+    const diffMs=dep-now;
+    if(diffMs>0){
+      document.getElementById("nextIn").textContent = fmt(Math.round(diffMs/60000))+"後";
+      document.getElementById("nextName").textContent = DAYS[1][0].n;
+    }else{
+      document.getElementById("nextIn").textContent="—";
+      document.getElementById("nextName").textContent="旅行は終了しました";
+    }
   }
 
   // legs
