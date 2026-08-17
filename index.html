@@ -172,9 +172,11 @@ footer{margin:24px 0 8px;font-size:11px;color:var(--muted);line-height:1.8;text-
   <div class="dayswitch">
     <button class="on" data-day="1">1日目 8/18</button>
     <button data-day="2">2日目 8/19</button>
+    <button data-day="3">3日目 8/20</button>
   </div>
   <div id="tl1" class="tl"></div>
   <div id="tl2" class="tl" style="display:none"></div>
+  <div id="tl3" class="tl" style="display:none"></div>
 </div>
 
 <!-- ===== 走行 ===== -->
@@ -189,13 +191,19 @@ footer{margin:24px 0 8px;font-size:11px;color:var(--muted);line-height:1.8;text-
 <div class="view" id="v-info">
   <h2>すぐ使うもの</h2>
   <div class="card">
-    <div class="card-t">宿</div>
+    <div class="card-t">宿（1泊目・8/18）</div>
     <div class="card-v">湯屋温泉 リフレパークきんたの里</div>
     <div class="card-s">島根県浜田市金城町七条イ980-1<br>
       浜田道 金城スマートIC（ETC専用）から5分</div>
     <!-- 宿の電話番号：直通が分かったら下の2か所（href と表示）を書き換えてください -->
     <a class="tel" href="tel:05030331039">☎ 050-3033-1039 に電話</a>
     <div class="card-s" style="margin-top:6px;font-size:11px">※予約サイト経由の番号の可能性があります。公式サイトの直通番号を確認して差し替えてください</div>
+  </div>
+  <div class="card">
+    <div class="card-t">宿（2泊目・8/19）</div>
+    <div class="card-v">瀬戸内児島ホテル</div>
+    <div class="card-s">岡山県倉敷市下津井吹上303-53</div>
+    <a class="tel" href="tel:0864737711">☎ 086-473-7711 に電話</a>
   </div>
   <div class="card">
     <div class="card-t">青山剛昌ふるさと館</div>
@@ -219,18 +227,19 @@ footer{margin:24px 0 8px;font-size:11px;color:var(--muted);line-height:1.8;text-
     安富PA → 用瀬PA　約1時間20分<br>
     名和PA → 宍道湖SA　約55km<br>
     寒曳山PA → 宮島SA　1時間以上</div>
-  <div class="alert"><b>帰りは長い</b><br>
-    大野IC → 枚方東IC は約410km・4時間40分。夕食をとると21時前後の到着になります。</div>
+  <div class="alert"><b>大塚国際美術館は歩く</b><br>
+    鑑賞ルートが4kmあり、3〜4時間かかります。歩きやすい靴で。</div>
 
   <h2>費用の目安</h2>
   <table>
-    <tr><td>高速料金（往復・ETC）</td><td>15,000〜16,000</td></tr>
-    <tr><td>ガソリン代</td><td>約8,000</td></tr>
-    <tr><td>宿泊（3人）</td><td>約30,000</td></tr>
+    <tr><td>高速料金（往復・ETC）</td><td>18,000〜19,000</td></tr>
+    <tr><td>ガソリン代</td><td>約10,000</td></tr>
+    <tr><td>宿泊（2泊・3人）</td><td>約60,000</td></tr>
     <tr><td>ふるさと館（3人）</td><td>2,100</td></tr>
+    <tr><td>大塚国際美術館（3人）</td><td>9,900</td></tr>
     <tr><td>フェリー＋訪問税</td><td>約1,800</td></tr>
     <tr><td>宮島口 駐車場</td><td>1,000〜1,500</td></tr>
-    <tr class="total"><td>合計</td><td>約58,000〜60,000</td></tr>
+    <tr class="total"><td>合計</td><td>約90,000前後</td></tr>
   </table>
   <footer>SA・PAには24時間トイレがあります。<br>給油所はSAにはありますが、PAにはありません。</footer>
 </div>
@@ -277,8 +286,17 @@ const DAYS = {
   {t:"12:40", n:"厳島神社 参拝", m:"回廊を歩いて約40分"},
   {t:"13:40", n:"散策・買い物", m:"五重塔、もみじ饅頭"},
   {t:"15:15", n:"フェリーで本土へ", m:"15:40 大野ICから山陽道"},
-  {t:"17:20", n:"福山SA で夕食", m:"45分"},
-  {t:"21:00", n:"枚方東IC 着", m:"おつかれさまでした"}
+  {t:"15:40", n:"移動", m:"山陽道で約2時間40分", drive:true},
+  {t:"18:10", n:"瀬戸内児島ホテル 着", m:"1泊目はここ（宿泊は児島）"},
+  {t:"18:30", n:"鷲羽山展望台で夕日", m:"宿から車で10分／日没は18:50ごろ"}
+ ],
+ 3:[
+  {t:"9:00",  n:"宿を出発", m:"児島ICから瀬戸中央自動車道"},
+  {t:"11:00", n:"大塚国際美術館 着",
+   m:"9:30〜17:00（入館券の販売は16:00まで）。8月は無休／入館料 大人3,300円／飲食の持ち込みは不可。館内にレストラン・カフェが3か所（レストラン ガーデン 11:30〜14:00・カフェ ド ジヴェルニー 10:30〜16:00・カフェ フィンセント 平日14:00〜16:30）",
+   w:"鑑賞ルートが4km、3〜4時間かかります。歩きやすい靴で"},
+  {t:"15:15", n:"美術館を出発", m:"鳴門ICから神戸淡路鳴門道へ"},
+  {t:"17:00", n:"枚方東IC 着", m:"3日間おつかれさまでした"}
  ]
 };
 
@@ -308,24 +326,28 @@ const LEGS = [
    {m:105, n:"宮島",   k:"SA", d:"降りる直前", f:["給油","レストラン"]}
   ], warn:"寒曳山PAのあと、宮島SAまで1時間以上あきます。"},
 
- {id:"L5", day:2, from:"大野", to:"枚方東", road:"山陽道・中国道・近畿道・第二京阪", km:"約410km", stops:[
+ {id:"L5", day:2, from:"大野", to:"児島", road:"山陽道", km:"約190km", stops:[
    {m:5,   n:"宮島",   k:"SA", d:"乗ってすぐ", f:["給油"]},
    {m:20,  n:"沼田",   k:"PA", d:"広島市内", f:["売店"]},
    {m:42,  n:"奥屋",   k:"PA", d:"", f:["売店"]},
-   {m:53,  n:"小谷",   k:"SA", d:"早めに夕食にするなら", f:["給油","レストラン"]},
+   {m:53,  n:"小谷",   k:"SA", d:"", f:["給油","レストラン"]},
    {m:78,  n:"八幡",   k:"PA", d:"尾道の手前", f:["売店"]},
-   {m:102, n:"福山",   k:"SA", d:"ここで夕食", f:["給油","フードコート"]},
+   {m:102, n:"福山",   k:"SA", d:"", f:["給油","フードコート"]},
    {m:113, n:"篠坂",   k:"PA", d:"笠岡", f:[]},
    {m:130, n:"道口",   k:"PA", d:"", f:["食事"]},
-   {m:158, n:"吉備",   k:"SA", d:"大きいSA", f:["給油","レストラン"]},
-   {m:176, n:"瀬戸",   k:"PA", d:"", f:["食事"]},
-   {m:201, n:"福石",   k:"PA", d:"", f:["食事"]},
-   {m:218, n:"龍野西", k:"SA", d:"給油の最後の目安", f:["給油","レストラン"]},
-   {m:233, n:"白鳥",   k:"PA", d:"姫路", f:["食事"]},
-   {m:247, n:"権現湖", k:"PA", d:"加古川", f:["食事"]},
-   {m:257, n:"三木",   k:"SA", d:"山陽道で最後のSA", f:["給油","レストラン"]},
-   {m:275, n:"西宮名塩", k:"SA", d:"あと30分ほど", f:["給油","フードコート"]}
-  ], warn:"410kmを4時間40分。夕食をとると到着は21時前後になります。"}
+   {m:158, n:"吉備",   k:"SA", d:"児島ICの直前。最後の給油ポイント", f:["給油","レストラン"]}
+  ], warn:"約190kmを2時間40分。児島到着は18時すぎになります。"},
+
+ {id:"L6", day:3, from:"児島", to:"鳴門", road:"瀬戸中央道・高松道・神戸淡路鳴門道", km:"約100km", stops:[
+   {m:10, n:"与島",     k:"PA", d:"瀬戸大橋の中央にある島。うどんあり。景色が良い", f:["食事"]},
+   {m:45, n:"高瀬",     k:"PA", d:"うどんあり", f:["食事"]},
+   {m:70, n:"津田の松原", k:"SA", d:"", f:["給油","レストラン"]}
+  ]},
+
+ {id:"L7", day:3, from:"鳴門", to:"枚方東", road:"神戸淡路鳴門道・阪神高速・第二京阪", km:"約150km", stops:[
+   {m:15, n:"淡路島南", k:"PA", d:"淡路島で最初の休憩所", f:[]},
+   {m:50, n:"淡路",     k:"SA", d:"明石海峡大橋の展望と観覧車", f:["給油","レストラン"]}
+  ]}
 ];
 
 const PACK = ["ETCカード","現金・小銭","歩きやすい靴","日傘・帽子","酔い止め",
@@ -353,7 +375,7 @@ function renderTL(day){
       </div>
     </div>`).join("");
 }
-renderTL(1); renderTL(2);
+renderTL(1); renderTL(2); renderTL(3);
 
 document.querySelectorAll(".dayswitch button").forEach(b=>{
   b.onclick=()=>{
@@ -362,6 +384,7 @@ document.querySelectorAll(".dayswitch button").forEach(b=>{
     const d=b.dataset.day;
     document.getElementById("tl1").style.display = d==="1"?"":"none";
     document.getElementById("tl2").style.display = d==="2"?"":"none";
+    document.getElementById("tl3").style.display = d==="3"?"":"none";
   };
 });
 
@@ -390,7 +413,8 @@ function legHTML(L){
 }
 document.getElementById("legs").innerHTML =
   `<h2 style="margin-top:0">1日目</h2>` + LEGS.filter(l=>l.day===1).map(legHTML).join("") +
-  `<h2>2日目</h2>` + LEGS.filter(l=>l.day===2).map(legHTML).join("");
+  `<h2>2日目</h2>` + LEGS.filter(l=>l.day===2).map(legHTML).join("") +
+  `<h2>3日目</h2>` + LEGS.filter(l=>l.day===3).map(legHTML).join("");
 
 document.querySelectorAll(".leg").forEach(node=>{
   const id=node.dataset.leg, btn=node.querySelector("[data-btn]");
@@ -424,7 +448,7 @@ document.querySelectorAll(".tab").forEach(t=>{
 });
 
 /* ================= TICK ================= */
-const TRIP={1:"2026-08-18",2:"2026-08-19"};
+const TRIP={1:"2026-08-18",2:"2026-08-19",3:"2026-08-20"};
 function tick(){
   const now=new Date();
   const hh=String(now.getHours()).padStart(2,"0"), mm=String(now.getMinutes()).padStart(2,"0");
@@ -433,9 +457,9 @@ function tick(){
   const iso=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
 
   // どの日か（モックでは日付が一致しなければ1日目を仮表示）
-  let day = iso===TRIP[2] ? 2 : 1;
+  let day = iso===TRIP[3] ? 3 : iso===TRIP[2] ? 2 : 1;
   const list=DAYS[day];
-  const inTrip = (iso===TRIP[1]||iso===TRIP[2]);
+  const inTrip = (iso===TRIP[1]||iso===TRIP[2]||iso===TRIP[3]);
 
   let liveI=-1;
   for(let i=0;i<list.length;i++){ if(nowMin>=toMin(list[i].t)) liveI=i; }
