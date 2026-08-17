@@ -1,0 +1,14 @@
+{
+  "name": "山陰・宮島 ドライブ",
+  "short_name": "山陰ドライブ",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6F4EE",
+  "theme_color": "#0E5C3F",
+  "lang": "ja",
+  "icons": [
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

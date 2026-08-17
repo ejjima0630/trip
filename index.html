@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0E5C3F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>山陰・宮島 ドライブ</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+:root{
+  --bg:#F6F4EE; --card:#FFF; --edge:#E4DFD4;
+  --green:#0E5C3F; --green-lt:#E7F0EA;
+  --blue:#12639E; --amber:#B8801C; --amber-bg:#FCF4E3;
+  --red:#B03E22; --red-bg:#FBEEEA;
+  --ink:#161B21; --body:#3B444D; --muted:#78818B;
+  --jp:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,"Noto Sans JP",system-ui,sans-serif;
+  --num:ui-monospace,"SF Mono",Menlo,monospace;
+  --safe:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);font-family:var(--jp);color:var(--ink);line-height:1.6;
+  padding-bottom:calc(76px + var(--safe))}
+.wrap{max-width:600px;margin:0 auto;padding:0 14px}
+
+/* ---------- now bar ---------- */
+.now{background:var(--green);color:#fff;padding:16px 14px 18px;position:relative;overflow:hidden}
+.now::after{content:"";position:absolute;right:-40px;top:-50px;width:150px;height:150px;
+  border-radius:50%;background:rgba(255,255,255,.06)}
+.now-in{max-width:600px;margin:0 auto;position:relative}
+.now-lbl{font-family:var(--num);font-size:10.5px;letter-spacing:.2em;color:#9CCDB6}
+.now-clock{font-family:var(--num);font-size:13px;color:#C4E2D3;float:right;margin-top:1px}
+.now-title{font-size:22px;font-weight:800;margin-top:6px;line-height:1.35}
+.now-sub{font-size:12.5px;color:#C4E2D3;margin-top:4px}
+.now-next{margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,.2);
+  display:flex;align-items:baseline;gap:8px;font-size:13px;color:#DCEFE5}
+.now-next b{font-family:var(--num);font-size:17px;color:#fff}
+
+/* ---------- tabs ---------- */
+.tabs{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.94);
+  backdrop-filter:blur(10px);border-top:1px solid var(--edge);display:flex;
+  padding-bottom:var(--safe);z-index:20}
+.tab{flex:1;padding:9px 4px 10px;text-align:center;border:none;background:none;
+  font-family:var(--jp);font-size:10.5px;color:var(--muted);cursor:pointer}
+.tab .ic{display:block;font-size:19px;line-height:1.25;margin-bottom:1px;filter:grayscale(1);opacity:.55}
+.tab.on{color:var(--green);font-weight:700}
+.tab.on .ic{filter:none;opacity:1}
+
+.view{display:none;padding-top:18px}
+.view.on{display:block}
+
+h2{font-size:12px;letter-spacing:.1em;color:var(--muted);font-weight:700;
+  margin:26px 0 10px}
+h2:first-child{margin-top:0}
+
+/* ---------- timeline ---------- */
+.tl{position:relative;padding-left:66px}
+.tl::before{content:"";position:absolute;left:52px;top:8px;bottom:8px;width:2px;background:var(--edge)}
+.ev{position:relative;padding:9px 0}
+.ev-t{position:absolute;left:-66px;top:12px;width:44px;text-align:right;
+  font-family:var(--num);font-size:14px;font-weight:700;color:var(--body)}
+.ev-d{position:absolute;left:-18px;top:17px;width:10px;height:10px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--muted)}
+.ev.drive .ev-d{border-color:var(--edge)}
+.ev-c{background:var(--card);border:1px solid var(--edge);border-radius:10px;padding:11px 13px}
+.ev.drive .ev-c{background:transparent;border:none;padding:2px 0 2px 2px}
+.ev-n{font-size:15px;font-weight:700}
+.ev.drive .ev-n{font-size:13px;font-weight:500;color:var(--muted)}
+.ev-m{font-size:11.5px;color:var(--muted);margin-top:3px}
+.ev-w{font-size:11.5px;color:var(--red);margin-top:5px;font-weight:600}
+
+.ev.past{opacity:.4}
+.ev.live .ev-c{border-color:var(--green);border-width:2px;background:var(--green-lt);
+  box-shadow:0 2px 8px rgba(14,92,63,.13)}
+.ev.live .ev-d{background:var(--green);border-color:var(--green);
+  box-shadow:0 0 0 4px rgba(14,92,63,.16)}
+.ev.live .ev-t{color:var(--green)}
+.badge-now{display:inline-block;font-family:var(--num);font-size:9px;font-weight:700;
+  background:var(--green);color:#fff;padding:1px 6px;border-radius:9px;margin-left:7px;
+  vertical-align:2px;letter-spacing:.04em}
+
+/* ---------- day switch ---------- */
+.dayswitch{display:flex;gap:6px;background:var(--card);border:1px solid var(--edge);
+  border-radius:10px;padding:4px;margin-bottom:16px}
+.dayswitch button{flex:1;padding:8px;border:none;background:none;border-radius:7px;
+  font-family:var(--jp);font-size:13px;color:var(--muted);cursor:pointer}
+.dayswitch button.on{background:var(--green);color:#fff;font-weight:700}
+
+/* ---------- leg (driving) ---------- */
+.leg{background:var(--card);border:1px solid var(--edge);border-radius:12px;
+  padding:14px;margin-bottom:14px}
+.leg-h{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:4px}
+.leg-ic{font-size:16px;font-weight:800}
+.leg-ar{color:var(--muted)}
+.leg-r{font-size:11px;color:var(--muted);margin-bottom:11px}
+.leg-btn{width:100%;padding:11px;border:1.5px solid var(--green);background:var(--green-lt);
+  color:var(--green);border-radius:9px;font-family:var(--jp);font-size:13.5px;font-weight:700;
+  cursor:pointer}
+.leg-btn.running{background:var(--green);color:#fff;border-color:var(--green)}
+.leg-el{text-align:center;font-family:var(--num);font-size:26px;font-weight:700;
+  color:var(--green);margin:10px 0 2px}
+.leg-el-l{text-align:center;font-size:10.5px;color:var(--muted);margin-bottom:10px}
+
+.sap{margin-top:12px;border-top:1px solid var(--edge);padding-top:10px}
+.sap-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0}
+.sap-m{font-family:var(--num);font-size:13px;font-weight:700;color:var(--amber);
+  min-width:44px;text-align:right;padding-top:1px}
+.sap-b{flex:1}
+.sap-n{font-size:13.5px;font-weight:700}
+.tg{font-family:var(--num);font-size:8.5px;font-weight:700;background:var(--blue);color:#fff;
+  padding:1px 4px;border-radius:2px;margin-left:5px;vertical-align:2px}
+.tg.pa{background:transparent;border:1px solid var(--blue);color:var(--blue)}
+.sap-d{font-size:11px;color:var(--muted);margin-top:1px}
+.chips{margin-top:4px;display:flex;gap:4px;flex-wrap:wrap}
+.chip{font-size:9.5px;color:var(--body);border:1px solid var(--edge);padding:1px 5px;border-radius:8px}
+.chip.gs{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
+.sap-row.soon{background:var(--amber-bg);border-radius:7px;margin:0 -6px;padding:7px 6px}
+.sap-row.done{opacity:.35}
+.warn{font-size:11px;color:var(--red);background:var(--red-bg);border-radius:7px;
+  padding:7px 9px;margin:6px 0}
+
+/* ---------- info cards ---------- */
+.card{background:var(--card);border:1px solid var(--edge);border-radius:12px;
+  padding:13px 14px;margin-bottom:11px}
+.card-t{font-size:11px;color:var(--muted);letter-spacing:.05em;margin-bottom:3px}
+.card-v{font-size:15px;font-weight:700;line-height:1.5}
+.card-s{font-size:12px;color:var(--muted);margin-top:4px}
+.card a{color:var(--blue);text-decoration:none;border-bottom:1px solid #BCD8ED}
+.tel{display:inline-block;margin-top:8px;padding:8px 14px;background:var(--green);color:#fff;
+  border-radius:8px;font-size:13px;font-weight:700;text-decoration:none}
+
+.alert{background:var(--amber-bg);border:1px solid #E8CF9A;border-left:3px solid var(--amber);
+  border-radius:0 9px 9px 0;padding:11px 13px;margin-bottom:11px;font-size:12.5px;color:#6B4E10;line-height:1.7}
+.alert b{color:var(--amber)}
+
+/* ---------- checklist ---------- */
+.chk{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--edge);
+  border-radius:9px;padding:11px 13px;margin-bottom:7px;cursor:pointer}
+.chk input{width:19px;height:19px;accent-color:var(--green);flex:none}
+.chk span{font-size:14px}
+.chk.done span{color:var(--muted);text-decoration:line-through}
+
+table{width:100%;border-collapse:collapse;background:var(--card);
+  border:1px solid var(--edge);border-radius:12px;overflow:hidden}
+td{padding:10px 13px;font-size:13px;border-bottom:1px solid var(--edge)}
+tr:last-child td{border-bottom:none}
+td:last-child{text-align:right;font-family:var(--num);font-weight:600}
+tr.total td{background:var(--green-lt);font-weight:800;color:var(--green)}
+
+footer{margin:24px 0 8px;font-size:11px;color:var(--muted);line-height:1.8;text-align:center}
+</style>
+</head>
+<body>
+
+<!-- ===== NOW ===== -->
+<div class="now">
+  <div class="now-in">
+    <span class="now-lbl">NOW</span>
+    <span class="now-clock" id="clock">--:--</span>
+    <div class="now-title" id="nowTitle">出発前</div>
+    <div class="now-sub" id="nowSub">8/18（火）6:30 に枚方東ICから出発します</div>
+    <div class="now-next"><span>次は</span><b id="nextIn">—</b><span id="nextName"></span></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ===== 予定 ===== -->
+<div class="view on" id="v-plan">
+  <div class="dayswitch">
+    <button class="on" data-day="1">1日目 8/18</button>
+    <button data-day="2">2日目 8/19</button>
+  </div>
+  <div id="tl1" class="tl"></div>
+  <div id="tl2" class="tl" style="display:none"></div>
+</div>
+
+<!-- ===== 走行 ===== -->
+<div class="view" id="v-drive">
+  <h2>高速の区間</h2>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:14px">
+    ICで高速に乗ったら「乗った」を押してください。経過時間から、次のSA・PAまであと何分かを表示します。</p>
+  <div id="legs"></div>
+</div>
+
+<!-- ===== 情報 ===== -->
+<div class="view" id="v-info">
+  <h2>すぐ使うもの</h2>
+  <div class="card">
+    <div class="card-t">宿</div>
+    <div class="card-v">湯屋温泉 リフレパークきんたの里</div>
+    <div class="card-s">島根県浜田市金城町七条イ980-1<br>
+      浜田道 金城スマートIC（ETC専用）から5分</div>
+    <!-- 宿の電話番号：直通が分かったら下の2か所（href と表示）を書き換えてください -->
+    <a class="tel" href="tel:05030331039">☎ 050-3033-1039 に電話</a>
+    <div class="card-s" style="margin-top:6px;font-size:11px">※予約サイト経由の番号の可能性があります。公式サイトの直通番号を確認して差し替えてください</div>
+  </div>
+  <div class="card">
+    <div class="card-t">青山剛昌ふるさと館</div>
+    <div class="card-v">9:30 — 17:30</div>
+    <div class="card-s">最終受付17:00 ／ 大人700円 ／ 駐車場無料</div>
+  </div>
+  <div class="card">
+    <div class="card-t">リンク</div>
+    <div class="card-s" style="margin-top:2px;line-height:2">
+      <a href="https://kintanosato.com/">きんたの里 公式サイト</a><br>
+      <a href="https://search.w-nexco.co.jp/">NEXCO西日本 交通情報</a><br>
+      宮島観光協会の潮見表（8/19の潮位）
+    </div>
+  </div>
+
+  <h2>運転で気をつけること</h2>
+  <div class="alert"><b>給油できない区間</b><br>
+    鳥取道は全区間で給油できません。1日目は加西SAまでに満タンに。<br>
+    山陰道の出雲IC〜金城スマートICにもスタンドがありません。</div>
+  <div class="alert"><b>休憩所が空く区間</b><br>
+    安富PA → 用瀬PA　約1時間20分<br>
+    名和PA → 宍道湖SA　約55km<br>
+    寒曳山PA → 宮島SA　1時間以上</div>
+  <div class="alert"><b>帰りは長い</b><br>
+    大野IC → 枚方東IC は約410km・4時間40分。夕食をとると21時前後の到着になります。</div>
+
+  <h2>費用の目安</h2>
+  <table>
+    <tr><td>高速料金（往復・ETC）</td><td>15,000〜16,000</td></tr>
+    <tr><td>ガソリン代</td><td>約8,000</td></tr>
+    <tr><td>宿泊（3人）</td><td>約30,000</td></tr>
+    <tr><td>ふるさと館（3人）</td><td>2,100</td></tr>
+    <tr><td>フェリー＋訪問税</td><td>約1,800</td></tr>
+    <tr><td>宮島口 駐車場</td><td>1,000〜1,500</td></tr>
+    <tr class="total"><td>合計</td><td>約58,000〜60,000</td></tr>
+  </table>
+  <footer>SA・PAには24時間トイレがあります。<br>給油所はSAにはありますが、PAにはありません。</footer>
+</div>
+
+<!-- ===== 持ち物 ===== -->
+<div class="view" id="v-pack">
+  <h2>持ち物</h2>
+  <div id="packList"></div>
+  <footer>チェックはこの端末に保存されます</footer>
+</div>
+
+</div>
+
+<!-- ===== TABS ===== -->
+<nav class="tabs">
+  <button class="tab on" data-v="plan"><span class="ic">🗓</span>予定</button>
+  <button class="tab" data-v="drive"><span class="ic">🛣</span>走行</button>
+  <button class="tab" data-v="info"><span class="ic">📍</span>情報</button>
+  <button class="tab" data-v="pack"><span class="ic">🎒</span>持ち物</button>
+</nav>
+
+<script>
+/* ================= DATA ================= */
+const DAYS = {
+ 1:[
+  {t:"6:30",  n:"枚方東IC から出発", m:"第二京阪 → 近畿道 → 中国道", drive:false},
+  {t:"7:55",  n:"加西SA で休憩", m:"15分", w:"ここで給油。この先の鳥取道にスタンドはありません"},
+  {t:"8:10",  n:"移動", m:"佐用JCTから鳥取道へ", drive:true},
+  {t:"9:50",  n:"青山剛昌ふるさと館", m:"原画とトリック体験。1時間半ほど"},
+  {t:"11:15", n:"コナン通り 散策", m:"駅前まで銅像が続く"},
+  {t:"12:00", n:"昼食（道の駅 大栄）", m:"ふるさと館のとなり"},
+  {t:"12:40", n:"移動", m:"山陰道で約2時間", drive:true},
+  {t:"14:35", n:"出雲大社 参拝", m:"神楽殿の大注連縄、神門通り。拝礼は二礼四拍手一礼"},
+  {t:"16:30", n:"移動", m:"浜田道で宿へ", drive:true, w:"出雲を出る前にトイレと給油を"},
+  {t:"18:00", n:"きんたの里 チェックイン", m:"温泉と夕食（館内レストラン）"}
+ ],
+ 2:[
+  {t:"9:00",  n:"宿を出発", m:"金城スマートIC から浜田道"},
+  {t:"9:25",  n:"寒曳山PA で休憩", m:"15分。この先しばらく休憩所なし"},
+  {t:"9:40",  n:"移動", m:"中国道 → 広島道 → 山陽道", drive:true},
+  {t:"11:00", n:"宮島口 着・駐車", m:"1日1,000〜1,500円。満車のことあり"},
+  {t:"11:20", n:"フェリー", m:"約10分。宮島訪問税 1人100円"},
+  {t:"11:40", n:"参道商店街で昼食", m:"あなご飯、焼き牡蠣"},
+  {t:"12:40", n:"厳島神社 参拝", m:"回廊を歩いて約40分"},
+  {t:"13:40", n:"散策・買い物", m:"五重塔、もみじ饅頭"},
+  {t:"15:15", n:"フェリーで本土へ", m:"15:40 大野ICから山陽道"},
+  {t:"17:20", n:"福山SA で夕食", m:"45分"},
+  {t:"21:00", n:"枚方東IC 着", m:"おつかれさまでした"}
+ ]
+};
+
+const LEGS = [
+ {id:"L1", day:1, from:"枚方東", to:"北条", road:"第二京阪・近畿道・中国道・鳥取道・山陰道",
+  km:"約270km", stops:[
+   {m:40,  n:"西宮名塩", k:"SA", d:"中国道", f:["給油","レストラン"]},
+   {m:55,  n:"赤松",     k:"PA", d:"中国道", f:["売店"]},
+   {m:70,  n:"社",       k:"PA", d:"中国道", f:["売店"]},
+   {m:85,  n:"加西",     k:"SA", d:"中国道 ／ ここで休憩", f:["給油","レストラン"]},
+   {m:100, n:"安富",     k:"PA", d:"中国道", f:["食堂"]},
+   {m:180, n:"用瀬",     k:"PA", d:"鳥取道 ／ 最後の休憩所", f:[]}
+  ], warn:"安富PAのあと、用瀬PAまで約1時間20分あきます。鳥取道に給油所はありません。"},
+
+ {id:"L2", day:1, from:"北条", to:"出雲", road:"山陰自動車道", km:"約140km", stops:[
+   {m:12, n:"琴浦", k:"PA", d:"鮮魚と海産物", f:["物産"]},
+   {m:35, n:"名和", k:"PA", d:"大山が見える", f:["レストラン"]},
+   {m:85, n:"宍道湖", k:"SA", d:"山陰道 有料区間で唯一のSA", f:["給油","レストラン"]}
+  ], warn:"名和PAから宍道湖SAまで約55km、休憩所がありません。"},
+
+ {id:"L3", day:1, from:"出雲", to:"金城スマート", road:"山陰道 → 浜田道", km:"約100km", stops:[
+   {m:80, n:"金城", k:"PA", d:"スマートIC併設。降りて5分で宿", f:["ETC専用"]}
+  ], warn:"この区間の山陰道にSA・PAはありません。出雲を出る前に済ませてください。"},
+
+ {id:"L4", day:2, from:"金城スマート", to:"大野", road:"浜田道・中国道・広島道・山陽道", km:"約150km", stops:[
+   {m:25,  n:"寒曳山", k:"PA", d:"浜田道の休憩所は2つだけ", f:["売店"]},
+   {m:105, n:"宮島",   k:"SA", d:"降りる直前", f:["給油","レストラン"]}
+  ], warn:"寒曳山PAのあと、宮島SAまで1時間以上あきます。"},
+
+ {id:"L5", day:2, from:"大野", to:"枚方東", road:"山陽道・中国道・近畿道・第二京阪", km:"約410km", stops:[
+   {m:5,   n:"宮島",   k:"SA", d:"乗ってすぐ", f:["給油"]},
+   {m:20,  n:"沼田",   k:"PA", d:"広島市内", f:["売店"]},
+   {m:42,  n:"奥屋",   k:"PA", d:"", f:["売店"]},
+   {m:53,  n:"小谷",   k:"SA", d:"早めに夕食にするなら", f:["給油","レストラン"]},
+   {m:78,  n:"八幡",   k:"PA", d:"尾道の手前", f:["売店"]},
+   {m:102, n:"福山",   k:"SA", d:"ここで夕食", f:["給油","フードコート"]},
+   {m:113, n:"篠坂",   k:"PA", d:"笠岡", f:[]},
+   {m:130, n:"道口",   k:"PA", d:"", f:["食事"]},
+   {m:158, n:"吉備",   k:"SA", d:"大きいSA", f:["給油","レストラン"]},
+   {m:176, n:"瀬戸",   k:"PA", d:"", f:["食事"]},
+   {m:201, n:"福石",   k:"PA", d:"", f:["食事"]},
+   {m:218, n:"龍野西", k:"SA", d:"給油の最後の目安", f:["給油","レストラン"]},
+   {m:233, n:"白鳥",   k:"PA", d:"姫路", f:["食事"]},
+   {m:247, n:"権現湖", k:"PA", d:"加古川", f:["食事"]},
+   {m:257, n:"三木",   k:"SA", d:"山陽道で最後のSA", f:["給油","レストラン"]},
+   {m:275, n:"西宮名塩", k:"SA", d:"あと30分ほど", f:["給油","フードコート"]}
+  ], warn:"410kmを4時間40分。夕食をとると到着は21時前後になります。"}
+];
+
+const PACK = ["ETCカード","現金・小銭","歩きやすい靴","日傘・帽子","酔い止め",
+  "飲み物","モバイルバッテリー","洗面用具・着替え"];
+
+/* ================= STATE ================= */
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v===null?d:JSON.parse(v);}catch(e){return d;} },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+};
+
+/* ================= RENDER: timeline ================= */
+function toMin(t){ const[a,b]=t.split(":").map(Number); return a*60+b; }
+function fmt(min){ const h=Math.floor(min/60),m=min%60; return h>0?`${h}時間${m}分`:`${m}分`; }
+
+function renderTL(day){
+  const el=document.getElementById("tl"+day);
+  el.innerHTML = DAYS[day].map((e,i)=>`
+    <div class="ev ${e.drive?"drive":""}" data-day="${day}" data-i="${i}" data-min="${toMin(e.t)}">
+      <div class="ev-t">${e.t}</div><div class="ev-d"></div>
+      <div class="ev-c">
+        <div class="ev-n">${e.n}</div>
+        ${e.m?`<div class="ev-m">${e.m}</div>`:""}
+        ${e.w?`<div class="ev-w">⚠ ${e.w}</div>`:""}
+      </div>
+    </div>`).join("");
+}
+renderTL(1); renderTL(2);
+
+document.querySelectorAll(".dayswitch button").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll(".dayswitch button").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");
+    const d=b.dataset.day;
+    document.getElementById("tl1").style.display = d==="1"?"":"none";
+    document.getElementById("tl2").style.display = d==="2"?"":"none";
+  };
+});
+
+/* ================= RENDER: legs ================= */
+function legHTML(L){
+  return `<div class="leg" data-leg="${L.id}">
+    <div class="leg-h"><span class="leg-ic">${L.from}</span>
+      <span class="leg-ar">▶</span><span class="leg-ic">${L.to}</span></div>
+    <div class="leg-r">${L.road} ／ ${L.km}</div>
+    <div class="leg-el" data-el style="display:none">0:00</div>
+    <div class="leg-el-l" data-ell style="display:none">乗ってからの経過</div>
+    <button class="leg-btn" data-btn>乗った</button>
+    ${L.warn?`<div class="warn">⚠ ${L.warn}</div>`:""}
+    <div class="sap">
+      ${L.stops.map(s=>`
+        <div class="sap-row" data-m="${s.m}">
+          <div class="sap-m">${s.m>=60?Math.floor(s.m/60)+":"+String(s.m%60).padStart(2,"0"):s.m+"分"}</div>
+          <div class="sap-b">
+            <div class="sap-n">${s.n}<span class="tg ${s.k==="PA"?"pa":""}">${s.k}</span></div>
+            ${s.d?`<div class="sap-d">${s.d}</div>`:""}
+            ${s.f.length?`<div class="chips">${s.f.map(f=>`<span class="chip ${f==="給油"?"gs":""}">${f}</span>`).join("")}</div>`:""}
+          </div>
+        </div>`).join("")}
+    </div>
+  </div>`;
+}
+document.getElementById("legs").innerHTML =
+  `<h2 style="margin-top:0">1日目</h2>` + LEGS.filter(l=>l.day===1).map(legHTML).join("") +
+  `<h2>2日目</h2>` + LEGS.filter(l=>l.day===2).map(legHTML).join("");
+
+document.querySelectorAll(".leg").forEach(node=>{
+  const id=node.dataset.leg, btn=node.querySelector("[data-btn]");
+  btn.onclick=()=>{
+    const cur=store.get("leg:"+id,null);
+    if(cur){ store.set("leg:"+id,null); }
+    else{ store.set("leg:"+id, Date.now()); }
+    tick();
+  };
+});
+
+/* ================= RENDER: pack ================= */
+document.getElementById("packList").innerHTML = PACK.map((p,i)=>`
+  <label class="chk" data-p="${i}"><input type="checkbox"><span>${p}</span></label>`).join("");
+document.querySelectorAll(".chk").forEach(l=>{
+  const i=l.dataset.p, cb=l.querySelector("input");
+  cb.checked = store.get("pack:"+i,false);
+  l.classList.toggle("done",cb.checked);
+  cb.onchange=()=>{ store.set("pack:"+i,cb.checked); l.classList.toggle("done",cb.checked); };
+});
+
+/* ================= TABS ================= */
+document.querySelectorAll(".tab").forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+    document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));
+    t.classList.add("on");
+    document.getElementById("v-"+t.dataset.v).classList.add("on");
+    window.scrollTo(0,0);
+  };
+});
+
+/* ================= TICK ================= */
+const TRIP={1:"2026-08-18",2:"2026-08-19"};
+function tick(){
+  const now=new Date();
+  const hh=String(now.getHours()).padStart(2,"0"), mm=String(now.getMinutes()).padStart(2,"0");
+  document.getElementById("clock").textContent=hh+":"+mm;
+  const nowMin=now.getHours()*60+now.getMinutes();
+  const iso=now.toISOString().slice(0,10);
+
+  // どの日か（モックでは日付が一致しなければ1日目を仮表示）
+  let day = iso===TRIP[2] ? 2 : 1;
+  const list=DAYS[day];
+
+  let liveI=-1;
+  for(let i=0;i<list.length;i++){ if(nowMin>=toMin(list[i].t)) liveI=i; }
+
+  document.querySelectorAll(".ev").forEach(ev=>{
+    ev.classList.remove("past","live");
+    ev.querySelector(".badge-now")?.remove();
+    if(+ev.dataset.day!==day) return;
+    const i=+ev.dataset.i;
+    if(i<liveI) ev.classList.add("past");
+    if(i===liveI){
+      ev.classList.add("live");
+      const n=ev.querySelector(".ev-n");
+      n.insertAdjacentHTML("beforeend",'<span class="badge-now">NOW</span>');
+    }
+  });
+
+  const inTrip = (iso===TRIP[1]||iso===TRIP[2]);
+  if(liveI>=0 && inTrip){
+    document.getElementById("nowTitle").textContent=list[liveI].n;
+    document.getElementById("nowSub").textContent=list[liveI].m||"";
+  }else{
+    document.getElementById("nowTitle").textContent="出発前";
+    document.getElementById("nowSub").textContent="8/18（火）6:30 に枚方東ICから出発します";
+  }
+  const nx=list[liveI+1];
+  if(nx){
+    const d=toMin(nx.t)-nowMin;
+    document.getElementById("nextIn").textContent = d>0?fmt(d)+"後":"まもなく";
+    document.getElementById("nextName").textContent = nx.n;
+  }else{
+    document.getElementById("nextIn").textContent="—";
+    document.getElementById("nextName").textContent="予定は以上です";
+  }
+
+  // legs
+  document.querySelectorAll(".leg").forEach(node=>{
+    const id=node.dataset.leg, st=store.get("leg:"+id,null);
+    const btn=node.querySelector("[data-btn]");
+    const el=node.querySelector("[data-el]"), ell=node.querySelector("[data-ell]");
+    if(!st){
+      btn.textContent="乗った"; btn.classList.remove("running");
+      el.style.display="none"; ell.style.display="none";
+      node.querySelectorAll(".sap-row").forEach(r=>r.classList.remove("soon","done"));
+      return;
+    }
+    const mins=Math.floor((Date.now()-st)/60000);
+    btn.textContent="リセット"; btn.classList.add("running");
+    el.style.display=""; ell.style.display="";
+    el.textContent = Math.floor(mins/60)+":"+String(mins%60).padStart(2,"0");
+    let marked=false;
+    node.querySelectorAll(".sap-row").forEach(r=>{
+      const m=+r.dataset.m;
+      r.classList.remove("soon","done");
+      if(m<mins-3){ r.classList.add("done"); }
+      else if(!marked){ r.classList.add("soon"); marked=true;
+        const left=m-mins;
+        let lbl=r.querySelector(".sap-left");
+        if(!lbl){ lbl=document.createElement("div"); lbl.className="sap-d sap-left"; r.querySelector(".sap-b").appendChild(lbl); }
+        lbl.textContent = left>0?`あと ${left}分`:"まもなく";
+        lbl.style.color="var(--amber)"; lbl.style.fontWeight="700";
+      }
+      if(!r.classList.contains("soon")) r.querySelector(".sap-left")?.remove();
+    });
+  });
+}
+tick(); setInterval(tick,15000);
+
+/* ================= OFFLINE ================= */
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js").catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
