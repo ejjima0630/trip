@@ -1,7 +1,7 @@
 /* 山陰・宮島ドライブ — オフライン用 Service Worker
    index.html を更新したら、下の CACHE の数字を1つ上げてください。
    そうしないと古い画面が残り続けます。 */
-const CACHE = "sanin-miyajima-v5";
+const CACHE = "sanin-miyajima-v6";
 const ASSETS = ["./", "./index.html", "./manifest.json"];
 
 self.addEventListener("install", e => {
